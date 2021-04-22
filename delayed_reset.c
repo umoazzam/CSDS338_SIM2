@@ -14,7 +14,7 @@ void* philosopher (void* number) {
 
     pthread_mutex_lock (&cutlery[my_num]);
     printf("\nPhilosopher %d has left cutlery. \n",my_num);
-    sleep(3);
+    sleep(10);
     pthread_mutex_lock (&cutlery[(my_num + 1) %  number_philo]);
     printf("\nPhilosopher %d has right cutlery. \n",my_num);
 
