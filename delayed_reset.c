@@ -1,9 +1,12 @@
 #include <pthread.h>
 #include <stdio.h>
+#include <stdbool.h> 
 
 #define number_philo 5
 
 pthread_mutex_t cutlery[number_philo];
+pthread_t phils[number_philo];
+bool locked[number_philo];
 
 
 void* philosopher (void* number) {
@@ -31,6 +34,22 @@ void* philosopher (void* number) {
   return NULL;
 }
 
+void* detect_deadlock() {
+  int locks = 0;
+  for (int i = 0; i < number_philo; i++) {
+    if (locked[number_philo] == 1) {
+      locks++;
+    }
+  }
+
+  sleep(5);
+
+  if (locks == number_philo) {
+    pthread_cancel(phils[number_philo]);
+  }
+
+  return 0;
+}
 
 int main () {
 
@@ -49,6 +68,7 @@ int main () {
   for (i = 0; i < number_philo; i++) {
     phil_num[i] = i;
     pthread_create (&phils[i], NULL, philosopher, &phil_num[i]);
+    pthread_create (&check, NULL, detect_deadlock, NULL);
   }
 
   for (i = 0; i < number_philo; i++) {
