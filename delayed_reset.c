@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdbool.h> 
+#include <unistd.h>
 
 #define number_philo 5
 
@@ -22,7 +23,7 @@ void* philosopher (void* number) {
     printf("\nPhilosopher %d has right cutlery. \n",my_num);
 
     printf("\n Philosopher %d eating.\n", my_num);
-
+    sleep(10);
     printf("\n Philosopher %d done.\n", my_num);
 
     pthread_mutex_unlock (&cutlery[(my_num + 1) % number_philo]);
@@ -57,6 +58,7 @@ int main () {
   int phil_num[number_philo];
 
   pthread_t phils[number_philo];
+  pthread_t check;
 
   void* return_val;
 
