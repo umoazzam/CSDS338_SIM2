@@ -35,7 +35,7 @@ void* philosopher (void* number) {
   return NULL;
 }
 
-void* detect_deadlock() {
+void* detect_deadlock(void* arg) {
   int locks = 0;
   for (int i = 0; i < number_philo; i++) {
     if (locked[number_philo] == 1) {
@@ -47,8 +47,9 @@ void* detect_deadlock() {
 
   if (locks == number_philo) {
     pthread_cancel(phils[number_philo]);
+    printf("\ndeadlock!\n");
   }
-
+ 
   return 0;
 }
 
@@ -58,7 +59,7 @@ int main () {
   int phil_num[number_philo];
 
   pthread_t phils[number_philo];
-  pthread_t check;
+  pthread_t check[i];
 
   void* return_val;
 
@@ -70,7 +71,7 @@ int main () {
   for (i = 0; i < number_philo; i++) {
     phil_num[i] = i;
     pthread_create (&phils[i], NULL, philosopher, &phil_num[i]);
-    pthread_create (&check, NULL, detect_deadlock, NULL);
+    pthread_create (&check[i], NULL, detect_deadlock, NULL);
   }
 
   for (i = 0; i < number_philo; i++) {

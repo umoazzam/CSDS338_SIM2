@@ -15,7 +15,6 @@ bool hasEaten[number_philo];
 int eatNum[number_philo];
 double runtime;
 int value;
-clock_t start;
 
 void* philosopher(void* number) {
     int my_num = *((int*)number);
@@ -52,9 +51,7 @@ void* philosopher(void* number) {
         printf("\nPhilosopher %d no longer has cutlery.\n", my_num);
 
         if (count >= 4) {
-            clock_t end = clock();
-            double runtime = ((double)(end - start)) / CLOCKS_PER_SEC;
-            printf("\nIt took %f seconds for all the philosophers to eat.\n", runtime);
+            printf("\nAll the philosophers have eaten.\n");
         }
     }
 
@@ -79,7 +76,7 @@ void* detect_deadlock() {
 }
 
 int main() {
-
+    
     srand(time(NULL));
     value = rand() % 5;
 
@@ -97,7 +94,6 @@ int main() {
 
     void* return_val;
 
-    start = clock();
     for (i = 0; i < number_philo; i++) {
         pthread_mutex_init(&cutlery[i], NULL);
     }
