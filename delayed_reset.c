@@ -1,68 +1,63 @@
 #include <pthread.h>
 #include <stdio.h>
-#include <stdbool.h> 
+#include <stdlib.h>
 #include <unistd.h>
+#include <time.h> 
 
 #define number_philo 5
 
 pthread_mutex_t cutlery[number_philo];
 pthread_t phils[number_philo];
-bool locked[number_philo];
-
+int locked;
+int count;
+pthread_t check;
 
 void* philosopher (void* number) {
   int my_num = *((int*)number);
 
   while (1) {
     printf("\n Philosopher %d is thinking.\n",my_num);
-
     pthread_mutex_lock (&cutlery[my_num]);
+    locked++;
+    void* detect_deadlock();
     printf("\nPhilosopher %d has left cutlery. \n",my_num);
-    sleep(10);
+    sleep(1);
     pthread_mutex_lock (&cutlery[(my_num + 1) %  number_philo]);
     printf("\nPhilosopher %d has right cutlery. \n",my_num);
 
     printf("\n Philosopher %d eating.\n", my_num);
-    sleep(10);
+    sleep(5);
+
     printf("\n Philosopher %d done.\n", my_num);
+    count++;
 
     pthread_mutex_unlock (&cutlery[(my_num + 1) % number_philo]);
 
     pthread_mutex_unlock (&cutlery[my_num]);
+    locked--;
     printf("\nPhilosopher %d no longer has cutlery.\n", my_num);
   }
 
   return NULL;
 }
 
-void* detect_deadlock(void* arg) {
-  int locks = 0;
-  for (int i = 0; i < number_philo; i++) {
-    if (locked[number_philo] == 1) {
-      locks++;
+void* detect_deadlock() {
+  srand(time(NULL));
+  while (1) {
+    if (locked == 5) {
+      int c = rand() % 5;
+      printf("Deadlock detected, dropping Chopstick %d.", c);
+      pthread_mutex_unlock (&cutlery[c]);
     }
+    return NULL;
   }
-
-  sleep(5);
-
-  if (locks == number_philo) {
-    pthread_cancel(phils[number_philo]);
-    printf("\ndeadlock!\n");
-  }
- 
-  return 0;
 }
 
 int main () {
-
   int i;
   int phil_num[number_philo];
 
-  pthread_t phils[number_philo];
-  pthread_t check[i];
-
   void* return_val;
-
 
   for (i = 0; i < number_philo; i++) {
     pthread_mutex_init (&cutlery[i], NULL);
@@ -76,6 +71,7 @@ int main () {
 
   for (i = 0; i < number_philo; i++) {
     pthread_join (phils[i], &return_val);
+    pthread_join (check, &return_val);
   }
 
   return 0;
