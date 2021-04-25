@@ -20,7 +20,6 @@ void* philosopher (void* number) {
 
     pthread_mutex_lock (&cutlery[my_num]);
     locked++;
-    printf("locked = %d ", locked);
     printf("\nPhilosopher %d has left cutlery. \n",my_num);
     sleep(5);
     pthread_mutex_lock (&cutlery[(my_num + 1) %  number_philo]);
@@ -46,9 +45,8 @@ void* detect_deadlock() {
   while (1) {
     if (locked == 5) {
       int c = rand() % 5;
-      printf("Deadlock detected, dropping chopstick %d", c);
+      printf("Deadlock detected, dropping chopstick %d.", c);
       pthread_mutex_unlock (&cutlery[c]);
-      printf("Chopstick %d was dropped.", c);
     }
     return NULL;
   }
