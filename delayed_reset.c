@@ -1,6 +1,5 @@
 #include <pthread.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h> 
@@ -10,6 +9,7 @@
 pthread_mutex_t cutlery[number_philo];
 pthread_t phils[number_philo];
 int locked;
+int count;
 pthread_t check;
 
 void* philosopher (void* number) {
@@ -17,11 +17,11 @@ void* philosopher (void* number) {
 
   while (1) {
     printf("\n Philosopher %d is thinking.\n",my_num);
-
     pthread_mutex_lock (&cutlery[my_num]);
     locked++;
+    void* detect_deadlock();
     printf("\nPhilosopher %d has left cutlery. \n",my_num);
-    sleep(5);
+    sleep(1);
     pthread_mutex_lock (&cutlery[(my_num + 1) %  number_philo]);
     printf("\nPhilosopher %d has right cutlery. \n",my_num);
 
@@ -29,6 +29,7 @@ void* philosopher (void* number) {
     sleep(5);
 
     printf("\n Philosopher %d done.\n", my_num);
+    count++;
 
     pthread_mutex_unlock (&cutlery[(my_num + 1) % number_philo]);
 
@@ -45,7 +46,7 @@ void* detect_deadlock() {
   while (1) {
     if (locked == 5) {
       int c = rand() % 5;
-      printf("Deadlock detected, dropping chopstick %d.", c);
+      printf("Deadlock detected, dropping Chopstick %d.", c);
       pthread_mutex_unlock (&cutlery[c]);
     }
     return NULL;
